@@ -1,0 +1,75 @@
+﻿@model  TransacaoModel
+<h3>Meu DashBoard</h3>
+
+<div class="container">
+    <form asp-controller="Transacao" asp-action="DashBoard">
+        <div class="form-group">
+            <label>Data Transação (Início)</label>
+            <input type="date" asp-for="Data" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Data Transação (Final)</label>
+            <input type="date" asp-for="DataFinal" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Tipo Transação: </label>
+            <div style="display:none" class="radio" ><label><input type="radio" asp-for="Tipo" value="A" checked>Receitas e Despesas</label></div>
+            <div class="radio"><label><input type="radio" asp-for="Tipo" value="R" checked>Receitas</label></div>
+            <div class="radio"><label><input type="radio" asp-for="Tipo" value="D" checked>Despesas</label></div>
+        </div>
+        <div class="form-group">
+            <label>Conta</label>
+            <select asp-for="Conta_Id" class="form-control">
+                @{
+                    foreach (var item in (List<ContaModel>)ViewBag.ListaContas)
+                    {
+                        <option value="@item.Id.ToString()">@item.Nome.ToString()</option>
+                    }
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-block btn-success">Pesquisar</button>
+    </form>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+<br />
+<div id="canvas-holder" style="width:60%">
+    <canvas id="chart-area"></canvas>
+</div>
+<script>
+    var randomScalingFactor = function () {
+        return Math.round(Math.random() * 100);
+    };
+
+    var config = {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: [
+                    @Html.Raw(ViewBag.Valores)
+                ],
+                backgroundColor: [
+                    @Html.Raw(ViewBag.Cores)
+                ],
+                label: 'Dataset 1'
+            }],
+            labels: [
+                @Html.Raw(ViewBag.Labels)
+            ]
+        },
+        options: {
+            responsive: true
+        }
+    };
+
+    window.onload = function () {
+        var ctx = document.getElementById('chart-area').getContext('2d');
+        window.myPie = new Chart(ctx, config);
+    };
+
+</script>
+
